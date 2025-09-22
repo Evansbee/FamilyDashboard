@@ -281,13 +281,22 @@ class SpectraE6Dithering:
         output_path = Path(output_dir)
         output_path.mkdir(exist_ok=True)
 
-        # First, analyze what colors will be used
-        logger.info("Analyzing color distribution...")
-        color_stats = self.analyze_color_distribution(input_image)
-
-        # Apply dithering
+        # Apply dithering (single pass)
         logger.info("Applying Floyd-Steinberg dithering with text preservation...")
         dithered_image, palette_indices = self.floyd_steinberg_dither(input_image)
+
+        # Analyze the dithered image for statistics
+        logger.info("Analyzing color distribution...")
+        img_array = np.array(dithered_image)
+        height, width = img_array.shape[:2]
+        total_pixels = height * width
+
+        color_stats = {}
+        for color_name, color_rgb in self.E6_PALETTE.items():
+            mask = np.all(np.abs(img_array - color_rgb) < 2, axis=2)
+            count = np.sum(mask)
+            percentage = (count / total_pixels) * 100
+            color_stats[color_name] = (count, percentage)
 
         # Create preview with ORIGINAL image and statistics
         preview = self.create_preview_with_original(input_image, color_stats)

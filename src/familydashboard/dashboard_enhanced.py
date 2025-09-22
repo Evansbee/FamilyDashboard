@@ -8,6 +8,7 @@ import logging
 
 from familydashboard.components.weather_graph import TemperatureGraph
 from familydashboard.components.dithering import OptimizedE6Dithering
+from familydashboard.components.test_image import create_test_pattern, create_photo_like_image
 
 logger = logging.getLogger(__name__)
 
@@ -37,15 +38,16 @@ class EnhancedDashboardLayout:
         self.image = Image.new('RGB', (self.DISPLAY_WIDTH, self.DISPLAY_HEIGHT), self.WHITE)
         self.draw = ImageDraw.Draw(self.image)
 
-        # Enhanced layout regions - adjusted for weather graph
+        # Enhanced layout regions - adjusted for weather graph and test image
         self.regions = {
             'header': (0, 0, self.DISPLAY_WIDTH, 100),  # Date header (smaller)
             'weather_icon': (20, 110, 170, 260),  # Weather icon area
             'weather_info': (180, 110, 500, 260),  # Weather text info
             'weather_graph': (520, 110, 1580, 360),  # Temperature graph
-            'lunch': (20, 380, 780, 650),  # Lunch menu (left)
-            'announcements': (800, 380, 1580, 650),  # Announcements/notes (right)
-            'schedule': (20, 670, 1580, 1150),  # Daily schedule (larger)
+            'test_image': (20, 380, 420, 680),  # Test image for dithering demo
+            'lunch': (440, 380, 1000, 680),  # Lunch menu (middle)
+            'announcements': (1020, 380, 1580, 680),  # Announcements/notes (right)
+            'schedule': (20, 700, 1580, 1150),  # Daily schedule
             'footer': (0, 1150, self.DISPLAY_WIDTH, 1200)  # Status/update time
         }
 
@@ -289,30 +291,45 @@ class EnhancedDashboardLayout:
                 )
                 self.paste_graph(graph)
 
+        # Add test image for dithering demonstration
+        try:
+            # Create a colorful test pattern
+            test_img = create_test_pattern(400, 300)
+            # Resize to fit the region
+            x1, y1, x2, y2 = self.regions['test_image']
+            test_img = test_img.resize((x2 - x1, y2 - y1), Image.Resampling.LANCZOS)
+            self.image.paste(test_img, (x1, y1))
+
+            # Add label
+            self.draw.text((x1 + 10, y1 + 10), "Color Test Pattern",
+                          font=self.fonts.get('small', self.fonts['body']), fill=self.WHITE)
+        except Exception as e:
+            logger.warning(f"Could not add test image: {e}")
+
         # Render lunch menu (if school day)
         if 'lunch' in data and data['lunch']:
-            lunch_lines = ["School Lunch:"] + data['lunch']
-            self.draw_multiline_text('lunch', lunch_lines, 'body', self.RED)
+            lunch_lines = ["School Lunch:"] + data['lunch'][:8]  # Limit lines to fit smaller space
+            self.draw_multiline_text('lunch', lunch_lines, 'small', self.RED)
         else:
             # Weekend message
             self.draw_multiline_text('lunch',
-                                    ["Weekend - No School Lunch",
+                                    ["Weekend - No School",
                                      "",
                                      "Enjoy family meals!"],
-                                    'body', self.GRAY)
+                                    'small', self.GRAY)
 
-        # Render announcements/reminders
+        # Render announcements/reminders (smaller text to fit)
         if 'announcements' in data:
             self.draw_multiline_text('announcements',
-                                    ["Reminders:"] + data.get('announcements', []),
-                                    'body')
+                                    ["Reminders:"] + data.get('announcements', [])[:5],
+                                    'small')
         else:
             self.draw_multiline_text('announcements',
                                     ["Reminders:",
                                      "• Check backpacks",
-                                     "• Water bottles ready",
-                                     "• Homework completed"],
-                                    'body', self.GRAY)
+                                     "• Water bottles",
+                                     "• Homework done"],
+                                    'small', self.GRAY)
 
         # Render schedule
         if 'schedule' in data:
