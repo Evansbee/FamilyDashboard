@@ -13,37 +13,37 @@ class OpenMeteoWeatherProvider:
 
     BASE_URL = "https://api.open-meteo.com/v1/forecast"
 
-    # Font Awesome 7 weather icon mappings (Unicode points for FA7 Duotone)
+    # Font Awesome weather icon mappings (Standard unicode that works with FA 5/6/7)
     WEATHER_ICONS = {
-        # WMO Weather codes to Font Awesome 7 Duotone icons
-        0: "\ue28f",    # Clear sky - sun-bright (duotone)
-        1: "\ue37d",    # Mainly clear - sun-cloud (duotone)
-        2: "\ue37d",    # Partly cloudy - sun-cloud (duotone)
-        3: "\ue312",    # Overcast - clouds (duotone)
-        45: "\ue3c4",   # Foggy - fog (duotone)
-        48: "\ue3c4",   # Depositing rime fog - fog (duotone)
-        51: "\ue318",   # Light drizzle - cloud-drizzle (duotone)
-        53: "\ue318",   # Moderate drizzle - cloud-drizzle (duotone)
-        55: "\ue313",   # Dense drizzle - cloud-rain (duotone)
-        56: "\ue318",   # Light freezing drizzle
-        57: "\ue313",   # Dense freezing drizzle
-        61: "\ue318",   # Slight rain - cloud-drizzle (duotone)
-        63: "\ue313",   # Moderate rain - cloud-rain (duotone)
-        65: "\ue314",   # Heavy rain - cloud-showers-heavy (duotone)
-        66: "\ue313",   # Light freezing rain
-        67: "\ue314",   # Heavy freezing rain
-        71: "\ue31a",   # Slight snow - cloud-snow (duotone)
-        73: "\ue31a",   # Moderate snow - cloud-snow (duotone)
-        75: "\ue31a",   # Heavy snow - cloud-snow (duotone)
-        77: "\ue31a",   # Snow grains - cloud-snow (duotone)
-        80: "\ue318",   # Slight rain showers - cloud-drizzle (duotone)
-        81: "\ue313",   # Moderate rain showers - cloud-rain (duotone)
-        82: "\ue314",   # Violent rain showers - cloud-showers-heavy (duotone)
-        85: "\ue31a",   # Slight snow showers - cloud-snow (duotone)
-        86: "\ue31a",   # Heavy snow showers - cloud-snow (duotone)
-        95: "\ue31d",   # Thunderstorm - cloud-bolt (duotone)
-        96: "\ue31d",   # Thunderstorm with slight hail - cloud-bolt (duotone)
-        99: "\ue31d",   # Thunderstorm with heavy hail - cloud-bolt (duotone)
+        # WMO Weather codes to Font Awesome icons
+        0: "\uf185",    # Clear sky - sun
+        1: "\uf6c4",    # Mainly clear - cloud-sun
+        2: "\uf6c4",    # Partly cloudy - cloud-sun
+        3: "\uf0c2",    # Overcast - cloud
+        45: "\uf75f",   # Foggy - smog
+        48: "\uf75f",   # Depositing rime fog - smog
+        51: "\uf73d",   # Light drizzle - cloud-rain
+        53: "\uf73d",   # Moderate drizzle - cloud-rain
+        55: "\uf740",   # Dense drizzle - cloud-showers-heavy
+        56: "\uf73d",   # Light freezing drizzle - cloud-rain
+        57: "\uf740",   # Dense freezing drizzle - cloud-showers-heavy
+        61: "\uf73d",   # Slight rain - cloud-rain
+        63: "\uf73d",   # Moderate rain - cloud-rain
+        65: "\uf740",   # Heavy rain - cloud-showers-heavy
+        66: "\uf73d",   # Light freezing rain - cloud-rain
+        67: "\uf740",   # Heavy freezing rain - cloud-showers-heavy
+        71: "\uf2dc",   # Slight snow - snowflake
+        73: "\uf2dc",   # Moderate snow - snowflake
+        75: "\uf2dc",   # Heavy snow - snowflake
+        77: "\uf2dc",   # Snow grains - snowflake
+        80: "\uf73d",   # Slight rain showers - cloud-rain
+        81: "\uf73d",   # Moderate rain showers - cloud-rain
+        82: "\uf740",   # Violent rain showers - cloud-showers-heavy
+        85: "\uf2dc",   # Slight snow showers - snowflake
+        86: "\uf2dc",   # Heavy snow showers - snowflake
+        95: "\uf0e7",   # Thunderstorm - bolt
+        96: "\uf0e7",   # Thunderstorm with slight hail - bolt
+        99: "\uf0e7",   # Thunderstorm with heavy hail - bolt
     }
 
     # Weather code descriptions
@@ -144,7 +144,7 @@ class OpenMeteoWeatherProvider:
             return {
                 'weather_code': most_common_code,
                 'description': self.WEATHER_DESCRIPTIONS.get(most_common_code, "Unknown"),
-                'icon': self.WEATHER_ICONS.get(most_common_code, "\ue28f"),  # Default to sun-bright
+                'icon': self.WEATHER_ICONS.get(most_common_code, "\uf185"),  # Default to sun
                 'temperature_high': daily_data['temperature_2m_max'][0] if daily_data.get('temperature_2m_max') else None,
                 'temperature_low': daily_data['temperature_2m_min'][0] if daily_data.get('temperature_2m_min') else None,
                 'precipitation_sum': daily_data['precipitation_sum'][0] if daily_data.get('precipitation_sum') else 0,
@@ -171,4 +171,4 @@ class OpenMeteoWeatherProvider:
         Returns:
             Font Awesome unicode character
         """
-        return self.WEATHER_ICONS.get(weather_code, "\ue28f")  # Default to sun-bright
+        return self.WEATHER_ICONS.get(weather_code, "\uf185")  # Default to sun

@@ -85,7 +85,7 @@ def generate_enhanced_dashboard(
         # Fallback to mock data
         weather_forecast = {
             'description': 'Partly Cloudy',
-            'icon': '\uf6c4',
+            'icon': '\uf0c2',
             'temperature_high': 75,
             'temperature_low': 60,
             'precipitation_probability': 20,
